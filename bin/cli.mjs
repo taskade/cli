@@ -30,10 +30,23 @@ function readLine() {
   return new Promise((resolve) => {
     process.stdin.resume();
     process.stdin.setEncoding("utf8");
-    process.stdin.once("data", (data) => {
-      process.stdin.pause();
-      resolve(data.trim());
-    });
+    if (process.stdin.isTTY) {
+      // Interactive: wait for a single line (Enter key)
+      process.stdin.once("data", (data) => {
+        process.stdin.pause();
+        resolve(data.trim());
+      });
+    } else {
+      // Non-interactive (pipe): read all of stdin, resolve on end
+      let data = "";
+      process.stdin.on("data", (chunk) => {
+        data += chunk;
+      });
+      process.stdin.on("end", () => {
+        process.stdin.pause();
+        resolve(data.trim());
+      });
+    }
   });
 }
 
