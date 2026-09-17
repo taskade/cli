@@ -7,12 +7,13 @@ import { dirname, join } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLI = join(__dirname, "..", "bin", "cli.mjs");
 
-function runCli(args, env = {}) {
+function runCli(args, env = {}, input = "") {
   try {
     const output = execFileSync("node", [CLI, ...args], {
       encoding: "utf8",
       env: { ...process.env, ...env },
       timeout: 5000,
+      input,
     });
     return { stdout: output, stderr: "", exitCode: 0 };
   } catch (err) {
