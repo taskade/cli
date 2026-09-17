@@ -86,9 +86,9 @@ MCP server URL: https://taskade.com/mcp
 |---|-----------|-------------|
 | URL | `https://taskade.com/mcp` | `npx @taskade/mcp-server` |
 | Auth | PAT (`tskdp_...`) | PAT (`tskdp_...`) |
-| Tools | 44 (Phase A complete) | 14 (read-only subset) |
+| Tools | 48 (44 Phase A + 4 native) | 14 (read-only subset) |
 | Plan | Starter+ | Any |
-| Best for | Cursor, Claude Desktop, Claude Code | Offline / air-gapped |
+| Best for | Cursor, Claude Desktop, Claude Code | Local stdio wrapper |
 
 **Use hosted MCP.** It has 3x more tools (including writes) and is maintained. The stdio wrapper is a local fallback only.
 
