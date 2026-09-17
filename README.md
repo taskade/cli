@@ -90,7 +90,7 @@ MCP server URL: https://taskade.com/mcp
 | Plan | Starter+ | Any |
 | Best for | Cursor, Claude Desktop, Claude Code | Offline / air-gapped |
 
-**Use hosted MCP.** It has 3x more tools (including writes) and is maintained. The stdio wrapper is an offline fallback.
+**Use hosted MCP.** It has 3x more tools (including writes) and is maintained. The stdio wrapper is a local fallback only.
 
 ## Related
 
