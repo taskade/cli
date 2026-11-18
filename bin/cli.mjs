@@ -5,17 +5,17 @@
  *
  * Commands:
  *   taskade plug [cursor|claude]  Print the MCP server config block for your client.
- *   taskade whoami               Verify your PAT works against the Taskade API.
+ *   taskade whoami               Does not work today: GET /api/v2/user does not exist.
  *   taskade help                  Show this help.
  *
  * Usage:
- *   npx @taskade/cli plug cursor    # copy-paste into Cursor's MCP config
- *   npx @taskade/cli whoami         # paste your tskdp_ token, verify it works
+ *   npx github:taskade/cli plug cursor    # copy-paste into Cursor's MCP config
+ *   (The package is not on npm yet. `npx @taskade/cli` fails.)
  *
  * Environment:
  *   TASKADE_TOKEN   Your Personal Access Token (tskdp_...). If unset, you will be
- *                   prompted to paste it. Get one at https://taskade.com/settings/api
- *   TASKADE_API_URL API base URL (default: https://www.taskade.com)
+ *                   prompted to paste it. Get one at https://www.taskade.com/settings/api
+ *   TASKADE_API_URL API base URL for whoami (default: https://www.taskade.com)
  */
 
 const DEFAULT_API_URL = "https://www.taskade.com";
@@ -65,7 +65,7 @@ async function getToken() {
 async function cmdPlug(client) {
   const token = await getToken();
   if (!token) {
-    process.stderr.write("No token provided. Get one at https://taskade.com/settings/api\n");
+    process.stderr.write("No token provided. Get one at https://www.taskade.com/settings/api\n");
     process.exit(1);
   }
 
@@ -89,11 +89,16 @@ async function cmdPlug(client) {
     process.stdout.write(json);
     process.stdout.write("\n");
   } else if (client === "claude") {
-    // Claude Desktop / Claude Code reads claude_desktop_config.json
-    process.stdout.write(`# Add this to your Claude config\n`);
-    process.stdout.write(`# ~/Library/Application Support/Claude/claude_desktop_config.json (macOS)\n`);
-    process.stdout.write(`# or .mcp.json in your project root (Claude Code)\n\n`);
-    process.stdout.write(json);
+    // Claude Code reads a remote server from .mcp.json only with "type": "http".
+    // Claude Desktop adds a remote server in Settings > Connectors, not from a file.
+    const claudeConfig = {
+      mcpServers: {
+        taskade: { type: "http", ...config.mcpServers.taskade },
+      },
+    };
+    process.stdout.write(`# Claude Code: add this to .mcp.json in your project root\n`);
+    process.stdout.write(`# Claude Desktop: add ${MCP_SERVER_URL} in Settings > Connectors and sign in\n\n`);
+    process.stdout.write(JSON.stringify(claudeConfig, null, 2));
     process.stdout.write("\n");
   } else {
     // No client specified - just print the raw JSON
@@ -106,7 +111,7 @@ async function cmdPlug(client) {
 async function cmdWhoami() {
   const token = await getToken();
   if (!token) {
-    process.stderr.write("No token provided. Get one at https://taskade.com/settings/api\n");
+    process.stderr.write("No token provided. Get one at https://www.taskade.com/settings/api\n");
     process.exit(1);
   }
 
@@ -122,7 +127,7 @@ async function cmdWhoami() {
     });
 
     if (res.status === 401) {
-      process.stderr.write("Token is invalid or expired. Get a new one at https://taskade.com/settings/api\n");
+      process.stderr.write("Token is invalid or expired. Get a new one at https://www.taskade.com/settings/api\n");
       process.exit(1);
     }
 
@@ -160,17 +165,18 @@ USAGE
 
 COMMANDS
   plug [cursor|claude]   Print the MCP server config block for your client
-  whoami                 Verify your PAT works against the Taskade API
+  whoami                 Does not work today (GET /api/v2/user does not exist)
   help                   Show this help message
 
 EXAMPLES
-  npx @taskade/cli plug cursor     # config block for Cursor
-  npx @taskade/cli plug claude     # config block for Claude Desktop/Code
-  npx @taskade/cli plug            # raw JSON, no client wrapper
-  npx @taskade/cli whoami          # verify your token
+  npx github:taskade/cli plug cursor     # config block for Cursor
+  npx github:taskade/cli plug claude     # config block for Claude Code
+  npx github:taskade/cli plug            # raw JSON, no client wrapper
+
+  The package is not on npm yet, so npx @taskade/cli fails.
 
 ENVIRONMENT
-  TASKADE_TOKEN     Your PAT (tskdp_...). Get one at https://taskade.com/settings/api
+  TASKADE_TOKEN     Your PAT (tskdp_...). Get one at https://www.taskade.com/settings/api
   TASKADE_API_URL   API base URL (default: https://www.taskade.com)
 
 LEARN MORE

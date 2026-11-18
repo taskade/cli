@@ -77,8 +77,12 @@ test("plug claude includes Claude instructions", () => {
     TASKADE_TOKEN: "tskdp_test123",
   });
   assert.equal(exitCode, 0);
-  assert.match(stdout, /Claude/);
-  assert.match(stdout, /claude_desktop_config\.json/);
+  assert.match(stdout, /Claude Code/);
+  assert.match(stdout, /\.mcp\.json/);
+  const parsed = JSON.parse(stdout.slice(stdout.indexOf("{")));
+  assert.equal(parsed.mcpServers.taskade.type, "http");
+  assert.equal(parsed.mcpServers.taskade.url, "https://www.taskade.com/mcp");
+  assert.equal(parsed.mcpServers.taskade.headers.Authorization, "Bearer tskdp_test123");
 });
 
 test("plug without token exits 1", () => {
