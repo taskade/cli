@@ -88,7 +88,9 @@ export async function plug(io, opts) {
         return plugJsonFile(ctx, {
           file: join(io.cwd, ".vscode", "mcp.json"),
           key: "servers",
-          next: "Next: open .vscode/mcp.json in VS Code, click Start above taskade, and sign in when VS Code asks.",
+          next: token
+            ? "Next: open .vscode/mcp.json in VS Code and click Start above taskade. VS Code sends your token."
+            : "Next: open .vscode/mcp.json in VS Code, click Start above taskade, and sign in when VS Code asks.",
         });
       }
       return plugVsCodeUser(ctx);
