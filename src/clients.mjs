@@ -9,8 +9,8 @@ import { exists, getEnv, homeDir, which } from "./system.mjs";
 
 export const SERVER_NAME = "taskade";
 export const DEFAULT_SERVER_URL = "https://www.taskade.com/mcp";
-// The command that runs this CLI. Change it to `npx @taskade/cli` after the first npm release.
-export const RUN = "npx github:taskade/cli";
+// The command that runs this CLI.
+export const RUN = "npx @taskade/cli";
 export const TOKEN_PAGE = "https://www.taskade.com/settings/api";
 
 /**

@@ -110,8 +110,8 @@ test("plug with no client lists the clients on the machine and changes nothing",
   mkdirSync(join(box.home, ".cursor"));
   const r = await runCli(box, ["plug"]);
   assert.equal(r.code, 0);
-  assert.match(r.stdout, /Claude Code\s+npx github:taskade\/cli plug claude-code/);
-  assert.match(r.stdout, /Cursor\s+npx github:taskade\/cli plug cursor/);
+  assert.match(r.stdout, /Claude Code\s+npx @taskade\/cli plug claude-code/);
+  assert.match(r.stdout, /Cursor\s+npx @taskade\/cli plug cursor/);
   assert.match(r.stdout, /Not found: .*Codex/);
   assert.deepEqual(calls(box, "claude"), []);
   assert.deepEqual(readdirSync(join(box.home, ".cursor")), []);

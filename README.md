@@ -3,12 +3,10 @@
 Connect your AI client to Taskade with one command:
 
 ```bash
-npx github:taskade/cli plug
+npx @taskade/cli plug
 ```
 
 The command lists the MCP clients on your machine and the command to run for each. It changes nothing.
-
-> **Not on npm yet.** Until the first npm release, run the CLI from GitHub with `npx github:taskade/cli`. After that release, `npx @taskade/cli` works too.
 
 ## Most people need no CLI
 
@@ -27,11 +25,11 @@ The hosted server is `https://www.taskade.com/mcp`. It is part of every paid Tas
 ## Connect a client: `plug`
 
 ```bash
-npx github:taskade/cli plug claude-code
-npx github:taskade/cli plug codex
-npx github:taskade/cli plug cursor
-npx github:taskade/cli plug vscode
-npx github:taskade/cli plug claude-desktop
+npx @taskade/cli plug claude-code
+npx @taskade/cli plug codex
+npx @taskade/cli plug cursor
+npx @taskade/cli plug vscode
+npx @taskade/cli plug claude-desktop
 ```
 
 Each command shows the change first. In a terminal, it asks for a "y" before it changes anything. On a pipe or in CI, it only prints. `connect` is an alias of `plug`, and `claude` is an alias of `claude-code`.
@@ -72,7 +70,7 @@ A headless machine cannot sign in with a browser. Create a personal access token
 
 ```bash
 export TASKADE_TOKEN=...   # your token
-npx github:taskade/cli plug cursor --token
+npx @taskade/cli plug cursor --token
 ```
 
 - The CLI reads the token only from `TASKADE_TOKEN`. It refuses a token on the command line, because your shell history keeps it.
@@ -84,7 +82,7 @@ npx github:taskade/cli plug cursor --token
 ## Check a connection: `doctor`
 
 ```bash
-npx github:taskade/cli doctor
+npx @taskade/cli doctor
 ```
 
 `doctor` answers "why does my connection fail?" in plain lines. Each line starts with `ok`, `fail`, or `--` (skipped), and a failed line gives the next step. It changes nothing on your machine. `whoami` is an alias of `doctor`.
@@ -141,8 +139,7 @@ Run the tests with `npm test`. The tests use a temporary HOME and PATH, fake cli
 To release a version:
 
 1. Set the version in `package.json` and add a section to `CHANGELOG.md`.
-2. Change the examples in this README and the `RUN` constant in `src/clients.mjs` from `npx github:taskade/cli` to `npx @taskade/cli` (once, with the first npm release).
-3. Publish a GitHub release with the tag `v<version>`. The `Release` workflow checks that the tag equals the version, runs the tests, and publishes to npm with provenance.
+2. Publish a GitHub release with the tag `v<version>`. The `Release` workflow checks that the tag equals the version, runs the tests, and publishes to npm with provenance.
 
 The `Release` workflow uses npm trusted publishing (OIDC), so the repository holds no npm token. It cannot work before these two steps, which an owner of the npm scope must do once:
 
