@@ -11,7 +11,7 @@ test("help prints the commands, the clients, and the setup prompt", async (t) =>
     const r = await runCli(box, args);
     assert.equal(r.code, 0, args.join(" "));
     for (const word of ["plug", "doctor", "connect", "whoami", "claude-desktop", "--token", "SKILL.md"]) {
-      assert.match(r.stdout, new RegExp(word.replace(/[.-]/g, "\\$&")), `${args.join(" ")}: ${word}`);
+      assert.ok(r.stdout.includes(word), `${args.join(" ")}: ${word}`);
     }
   }
 });
