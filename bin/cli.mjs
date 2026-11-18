@@ -19,7 +19,7 @@
  */
 
 const DEFAULT_API_URL = "https://www.taskade.com";
-const MCP_SERVER_URL = "https://taskade.com/mcp";
+const MCP_SERVER_URL = "https://www.taskade.com/mcp";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -174,7 +174,7 @@ ENVIRONMENT
   TASKADE_API_URL   API base URL (default: https://www.taskade.com)
 
 LEARN MORE
-  Hosted MCP:  https://taskade.com/mcp
+  Hosted MCP:  https://www.taskade.com/mcp
   API docs:    https://www.taskade.com/api/documentation/v2
   GitHub:      https://github.com/taskade/cli
 `);

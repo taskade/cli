@@ -59,7 +59,7 @@ test("plug with token outputs valid JSON", () => {
   const parsed = JSON.parse(stdout);
   assert.ok(parsed.mcpServers);
   assert.ok(parsed.mcpServers.taskade);
-  assert.equal(parsed.mcpServers.taskade.url, "https://taskade.com/mcp");
+  assert.equal(parsed.mcpServers.taskade.url, "https://www.taskade.com/mcp");
   assert.equal(parsed.mcpServers.taskade.headers.Authorization, "Bearer tskdp_test123");
 });
 
