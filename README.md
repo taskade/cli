@@ -41,7 +41,7 @@ Output (raw JSON):
 {
   "mcpServers": {
     "taskade": {
-      "url": "https://taskade.com/mcp",
+      "url": "https://www.taskade.com/mcp",
       "headers": {
         "Authorization": "Bearer tskdp_..."
       }
@@ -66,7 +66,7 @@ Token works.
   Email: john@example.com
   Plan:  pro
 
-MCP server URL: https://taskade.com/mcp
+MCP server URL: https://www.taskade.com/mcp
 ```
 
 ## Environment Variables
@@ -84,7 +84,7 @@ MCP server URL: https://taskade.com/mcp
 
 | | Hosted MCP | stdio (npm) |
 |---|-----------|-------------|
-| URL | `https://taskade.com/mcp` | `npx @taskade/mcp-server` |
+| URL | `https://www.taskade.com/mcp` | `npx @taskade/mcp-server` |
 | Auth | PAT (`tskdp_...`) | PAT (`tskdp_...`) |
 | Tools | 44 (Phase A complete) | 14 (read-only subset) |
 | Plan | Starter+ | Any |
@@ -94,7 +94,7 @@ MCP server URL: https://taskade.com/mcp
 
 ## Related
 
-- [Hosted MCP](https://taskade.com/mcp) - the server this CLI configures
+- [Hosted MCP](https://www.taskade.com/mcp) - the server this CLI configures
 - [API v2 docs](https://www.taskade.com/api/documentation/v2) - the REST API the MCP wraps
 - [taskade/mcp](https://github.com/taskade/mcp) - the MCP server repo
 - [taskade/docs](https://github.com/taskade/docs) - developer documentation
