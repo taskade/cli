@@ -1,32 +1,39 @@
 {
   "name": "@taskade/cli",
-  "version": "0.1.0",
-  "description": "Thin CLI for Taskade MCP plug-and-play. One command to connect Cursor/Claude to your Taskade workspace.",
+  "version": "0.2.0",
+  "description": "Connect Claude Code, Codex, Cursor, VS Code, or Claude Desktop to the hosted Taskade MCP server, and check the connection.",
   "type": "module",
   "bin": {
     "taskade": "./bin/cli.mjs"
   },
   "files": [
-    "bin/"
+    "bin/",
+    "src/"
   ],
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/cli.test.mjs test/plug.test.mjs test/doctor.test.mjs test/system.test.mjs"
   },
   "keywords": [
     "taskade",
     "mcp",
     "cli",
+    "claude-code",
+    "codex",
     "cursor",
-    "claude",
+    "vscode",
     "ai-agent"
   ],
   "license": "MIT",
   "homepage": "https://github.com/taskade/cli",
+  "bugs": "https://github.com/taskade/cli/issues",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/taskade/cli.git"
   },
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

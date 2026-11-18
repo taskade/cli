@@ -1,96 +1,69 @@
-import { test } from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { readFileSync } from "node:fs";
+import { test } from "node:test";
+import { runCli, sandbox } from "./helpers.mjs";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const CLI = join(__dirname, "..", "bin", "cli.mjs");
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
-function runCli(args, env = {}, input = "") {
-  try {
-    const output = execFileSync("node", [CLI, ...args], {
-      encoding: "utf8",
-      env: { ...process.env, ...env },
-      timeout: 5000,
-      input,
-    });
-    return { stdout: output, stderr: "", exitCode: 0 };
-  } catch (err) {
-    return {
-      stdout: err.stdout || "",
-      stderr: err.stderr || "",
-      exitCode: err.status || 1,
-    };
+test("help prints the commands, the clients, and the setup prompt", async (t) => {
+  const box = sandbox(t);
+  for (const args of [["help"], ["--help"], ["-h"], []]) {
+    const r = await runCli(box, args);
+    assert.equal(r.code, 0, args.join(" "));
+    for (const word of ["plug", "doctor", "connect", "whoami", "claude-desktop", "--token", "SKILL.md"]) {
+      assert.ok(r.stdout.includes(word), `${args.join(" ")}: ${word}`);
+    }
   }
-}
-
-test("help command prints usage", () => {
-  const { stdout, exitCode } = runCli(["help"]);
-  assert.equal(exitCode, 0);
-  assert.match(stdout, /@taskade\/cli/);
-  assert.match(stdout, /USAGE/);
-  assert.match(stdout, /plug/);
-  assert.match(stdout, /whoami/);
 });
 
-test("no args prints help", () => {
-  const { stdout, exitCode } = runCli([]);
-  assert.equal(exitCode, 0);
-  assert.match(stdout, /USAGE/);
+test("--version and -v print the package version", async (t) => {
+  const box = sandbox(t);
+  for (const flag of ["--version", "-v"]) {
+    const r = await runCli(box, [flag]);
+    assert.equal(r.code, 0);
+    assert.equal(r.stdout.trim(), pkg.version);
+  }
 });
 
-test("--help flag prints help", () => {
-  const { stdout, exitCode } = runCli(["--help"]);
-  assert.equal(exitCode, 0);
-  assert.match(stdout, /USAGE/);
+test("an unknown command prints a short message and exits 1", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["nonexistent"]);
+  assert.equal(r.code, 1);
+  assert.match(r.stderr, /Unknown command: nonexistent/);
+  assert.ok(r.stderr.split("\n").length <= 3, "the message is short");
 });
 
-test("unknown command exits 1", () => {
-  const { exitCode } = runCli(["nonexistent"]);
-  assert.equal(exitCode, 1);
+test("an unknown option exits 1", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["plug", "cursor", "--force"]);
+  assert.equal(r.code, 1);
+  assert.match(r.stderr, /Unknown option: --force/);
 });
 
-test("plug with token outputs valid JSON", () => {
-  const { stdout, exitCode } = runCli(["plug"], {
-    TASKADE_TOKEN: "tskdp_test123",
-  });
-  assert.equal(exitCode, 0);
-  const parsed = JSON.parse(stdout);
-  assert.ok(parsed.mcpServers);
-  assert.ok(parsed.mcpServers.taskade);
-  assert.equal(parsed.mcpServers.taskade.url, "https://www.taskade.com/mcp");
-  assert.equal(parsed.mcpServers.taskade.headers.Authorization, "Bearer tskdp_test123");
+test("an option of another command exits 1", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["doctor", "--yes"]);
+  assert.equal(r.code, 1);
+  assert.match(r.stderr, /--yes does not apply to doctor/);
 });
 
-test("plug cursor includes Cursor instructions", () => {
-  const { stdout, exitCode } = runCli(["plug", "cursor"], {
-    TASKADE_TOKEN: "tskdp_test123",
-  });
-  assert.equal(exitCode, 0);
-  assert.match(stdout, /Cursor/);
-  assert.match(stdout, /\.cursor\/mcp\.json/);
+test("--print and --yes together exit 1", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["plug", "cursor", "--print", "--yes"]);
+  assert.equal(r.code, 1);
 });
 
-test("plug claude includes Claude instructions", () => {
-  const { stdout, exitCode } = runCli(["plug", "claude"], {
-    TASKADE_TOKEN: "tskdp_test123",
-  });
-  assert.equal(exitCode, 0);
-  assert.match(stdout, /Claude Code/);
-  assert.match(stdout, /\.mcp\.json/);
-  const parsed = JSON.parse(stdout.slice(stdout.indexOf("{")));
-  assert.equal(parsed.mcpServers.taskade.type, "http");
-  assert.equal(parsed.mcpServers.taskade.url, "https://www.taskade.com/mcp");
-  assert.equal(parsed.mcpServers.taskade.headers.Authorization, "Bearer tskdp_test123");
+test("an unknown client exits 1 and lists the known clients", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["plug", "notepad"]);
+  assert.equal(r.code, 1);
+  assert.match(r.stderr, /Unknown client: notepad/);
+  assert.match(r.stderr, /claude-code, claude-desktop, cursor, codex, vscode/);
 });
 
-test("plug without token exits 1", () => {
-  const { exitCode } = runCli(["plug"], { TASKADE_TOKEN: "" });
-  assert.equal(exitCode, 1);
-});
-
-test("whoami without token exits 1", () => {
-  const { exitCode } = runCli(["whoami"], { TASKADE_TOKEN: "" });
-  assert.equal(exitCode, 1);
+test("TASKADE_MCP_URL must be https, except for localhost", async (t) => {
+  const box = sandbox(t);
+  const r = await runCli(box, ["plug", "cursor", "--print"], { TASKADE_MCP_URL: "http://example.com/mcp" });
+  assert.equal(r.code, 1);
+  assert.match(r.stderr, /must use https:\/\//);
 });
